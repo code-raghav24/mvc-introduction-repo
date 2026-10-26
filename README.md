@@ -25,3 +25,70 @@
 - Product is the name of collection.
 - productSchema defines the blueprint of what all fields should exists.
 - ProductModel is the function,through which operations are performed.
+---
+## SCHEMA VALIDATION
+- Before validation, undestand what defining schema did
+- It ignored the extra fields that was sent to the database, it wasn't able to validate "*saying these fields are missing i would not accept it.*"
+- even if we didn't send certain fields that was defined in the schema, it was letting to enter into the database.
+- so due to this reason we needed validation.
+### Validation strength
+- we define the rules or format that a data should follow before entering into database.
+- in mongoose it is simple, we name the field and pass an object defining the feature it needs to follow
+```js
+const productSchema = new Schema({
+     title:{
+          type:String,
+          required:true,
+          trim:true,
+          lowercase:true,
+          maxlength:150
+     },
+     description:{
+          type:String,
+          trim:true,
+          lowercase:true // required not given, filed could be missing
+     },
+     price:{
+          type:Number,
+          required:true,
+     },
+     discount:{
+          type:Number,
+          enum:[0,10,20,30,40,50], // only these options are allowed
+          default:0, //even if field not given will be stored with default value 0
+     },
+     status:{
+          type:String,
+          required:true,
+          enum:["inStock","outOfStock"], // [active,inactive,blocked] [free,pro,plus]
+          default:"inStock"
+     }
+})
+```
+- this isdemonstration to add **Custom Validation**.
+```js
+const isEmailValid = (email)=>{
+     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+     const result = emailRegex.test(email);// this gives true, false
+     return result;
+
+}
+const userSchema = new Schema({
+     email:{
+          type:String,
+          required:true,
+          trim:true,
+          lowercase:true,
+          validate:{
+               validator: isEmailValid,
+               message:"Invalid email address",
+          }
+     },
+     gmail:{
+          match:[
+               "/^[a-z0-9](\.?[a-z0-9]){5,}@gmail\.com$/i",
+               "Invalid gmail address"
+          ]
+     }
+})
+```
