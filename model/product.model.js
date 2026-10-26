@@ -23,12 +23,11 @@ const productSchema = new Schema({
   }
 },{timestamps:true})
 
-productSchema.pre('save',async function(next){
+productSchema.pre('save',async function(){
   console.log("i will run before you store something");
   const count = await model('Product').countDocuments();
   if(count >=15)
-    throw next(new Error("no more than 15 products"))
-  next;
+    throw new Error("no more than 15 products");
 })
 const ProductModel = model('Product',productSchema);
 
